@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet"
+	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script
+	src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<script src="js/ui-bootstrap-tpls-1.3.2.min.js"></script>	
+<title>Cognitive Agile Expert</title>
+</head>
+<body>
+	<div id="applicationDiv" ng-app="agileExpertApp"
+		ng-controller="conversionController" class="panel panel-default">
+		  <script type="text/ng-template" id="alert.html">
+    		<div class="alert alert-{{type}}"  role="alert">
+      					<div ng-transclude></div>
+    		</div>
+  		  </script>
+		<div class="panel-heading">
+		<h1 class="panel-title">Agile Expert Service</h1>
+		</div>
+		<h3>Dialog id {{ dialogId }}</h3>
+		<h4>Conversation id : {{conversationId}}</h4>
+		<h4>Client id : {{clientId}}</h4>
+		<input type="text" name="question" ng-model="question" />
+		<button class="btn btn-primary" ng-model="askBtn" ng-disabled="converseBtnDisable"
+			ng-click="loadInfo('expert');">Ask Expert</button>
+		<button ng-click="loadInfo('user');">Load Content</button>
+		<div id="history" class="well well-sm" style="width:50%"></div>
+	</div>
+
+	<script>
+		var app = angular.module('agileExpertApp', ['ui.bootstrap']);
+		app
+				.controller(
+						'conversionController',
+						function($scope, $http, $compile) {
+							$scope.converseBtnDisable = false;
+							$scope.clientId = 0;
+							$scope.conversationId = 0;
+							$scope.question = "";
+
+							if ($scope.dialogId == null) {
+								//Get the dialogid to start conversation
+								//Enable the startConveration Button
+
+							}
+							$scope.converse = function() {
+								$scope.converseBtnDisable = true;
+								var formData = {
+
+									"dialogId" : $scope.dialogId,
+									"clientId" : $scope.clientId,
+									"conversionId" : $scope.conversationId,
+									"question" : $scope.question
+								};
+								var postParams = {
+									method : 'POST',
+									url : 'expert/service/converse',
+									data : formData,
+									headers : {
+										'Content-Type' : 'application/x-www-form-urlencoded'
+									},
+									transformRequest : function(obj) {
+										var str = [];
+										for ( var p in obj)
+											str
+													.push(encodeURIComponent(p)
+															+ "="
+															+ encodeURIComponent(obj[p]));
+										return str.join("&");
+									}
+								};
+
+							};
+							$scope.loadInfo = function(persona) {
+
+								var divElement = angular.element(document
+										.querySelector('#history'));
+								var appendHtml = $compile(
+										'<convesation persona=\''+ persona +'\' text=\''+$scope.question+'\'></convesation>')
+										($scope);
+								divElement.append(appendHtml);
+							};
+
+						}).directive('convesation', function() {
+					return {
+						template : function(element, attr) {
+							var alertType = 'success';
+							if (attr.persona === 'expert') {
+								alertType = 'success';
+								element.css({
+									textAlign : 'right',
+									
+								});
+							} else {
+								alertType = 'warning';
+								element.css({
+									textAlign : 'left',
+									
+								});
+							}
+							return '<uib-alert template-url="alert.html"  type="'+alertType+'">'+attr.text+'</uib-alert>';
+							//return '<p class=>' + attr.text + '</p>';
+
+						}
+
+					}
+
+				});
+	</script>
+
+
+</body>
+
+</html>

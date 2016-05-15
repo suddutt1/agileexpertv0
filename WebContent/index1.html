@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<title>Cognitive Agile Expert</title>
+<style type="text/css">
+.expert{
+	background-color: lightblue;
+}
+.user{
+	background-color: lightgreen;
+}
+</style>
+</head>
+<body >
+<div id="applicationDiv" ng-app="agileExpertApp" ng-controller="conversionController">
+
+	<h1>Agile Expert Service</h1>
+	<h3>Dialog id {{ dialogId }}</h3>
+	<h4>Conversation id : {{conversationId}}</h4>
+	<h4>Client id : {{clientId}}</h4>
+	<input type="text" name="question" ng-model="question" />
+	<button ng-model="askBtn" ng-disabled = "converseBtnDisable" ng-click="converse();">{{message}}</button>
+	<div id="history"></div>
+</div>	
+	
+<script>
+var app = angular.module('agileExpertApp', []);
+app.controller('conversionController', function($scope,$http,$compile) {
+   $scope.converseBtnDisable  = true;
+   $scope.clientId = 0;
+   $scope.conversationId=0;
+   $scope.question  = "";
+   $scope.message = "Initializing";
+  
+	if($scope.dialogId == null)
+	{
+		//Get the dialogid to start conversation
+		//Enable the startConveration Button
+		
+		$http.get("expert/service/context").then(function(response){
+			console.log("Response for context :"+ response.data);		
+			if(response.data.success === true)
+			{
+				$scope.dialogId = response.data.result.id;
+				console.log("Setting the dialog id "+ $scope.dialogId);
+				$scope.message  = "We are almost ready..." ;
+				$scope.converse();
+				
+			}
+		}
+		,function(err){
+			
+			
+			
+		});
+	}
+	$scope.converse = function(){
+		$scope.converseBtnDisable = true;
+		$scope.display('user',$scope.question);
+		var formData = {
+				
+				"dialogId": $scope.dialogId,
+				"clientId": $scope.clientId,
+				"conversionId":$scope.conversationId,
+				"question": $scope.question
+		};
+		var postParams = {
+				method: 'POST',
+				url : 'expert/service/converse',
+				data: formData,
+				headers : {'Content-Type': 'application/x-www-form-urlencoded'} ,
+				transformRequest: function(obj) {
+					var str = [];
+					for(var p in obj)
+					str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+					return str.join("&");
+				}
+		};
+		$http(postParams).then(function(response){
+			
+			console.log("Convestion result received: "+ response);
+			if(response.data.success == true)
+			{
+				//Show the response 
+				//Store the conversation etc id 
+				$scope.clientId = response.data.result.clientId;
+				$scope.conversationId = response.data.result.id;
+				console.log("Response : "+ response.data.result.response[0]);
+				$scope.display('expert',response.data.result.response[0]);
+				$scope.message = "Ask Expert" ;
+				$scope.converseBtnDisable = false;
+				  			
+			}
+		},function(error){
+			
+			
+		});
+	}
+	$scope.display = function(persona,text){
+		
+		var divElement = angular.element(document.querySelector('#history'));
+		var appendHtml = $compile('<convesation persona=\''+ persona +'\' text=\''+text+'\'></convesation>')($scope);
+		 divElement.append(appendHtml);
+	};
+	
+}).directive('convesation',function(){
+	return {
+		template: function(element,attr){ 
+			if(attr.persona === 'expert')
+			{
+				element.css({ textAlign: 'right' , backgroundColor: 'green' })	;
+			}
+			else
+			{
+				element.css({ textAlign: 'left' , backgroundColor: 'yellow' })	;
+			}
+			return '<p class=\''+ attr.persona+'\'>'+ attr.text+'</p>' ;
+			
+		}
+		
+	}
+	
+});
+</script>
+	
+	
+</body>
+
+</html>

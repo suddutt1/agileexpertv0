@@ -1,0 +1,45 @@
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd">
+    <flow>
+        <folder label="Main" id="Main">
+        	<output>
+		        <prompt selectionType="RANDOM">
+		            <item>Hello, welcome to Cognitive Agile Scrum Expert </item>
+		        </prompt>
+		        <goto ref="getQuestions"/>
+		    </output>
+		    <getUserInput id="getQuestions">
+		        <search ref="search_all_questions"/>
+		        <default>
+		            <output>
+		                <prompt selectionType="RANDOM">
+		                    <item>
+		                        I am not able to answer your question at this momenet. May be I need more training.
+		                    </item>
+		                </prompt>
+		            </output>
+		        </default>
+		    </getUserInput>
+        </folder>
+        <folder label="Library" id="Library">
+            <folder label="Live Content" id="Live Content">
+            	
+            	<folder id="search_all_questions" label="All general QA">
+            		<input>
+            			<grammar>
+            				<item>what is agile</item>
+            				<item>what is agile methodoloy</item>
+            				<item>what does agile do ?</item>
+            			</grammar>
+            			<output>
+            				<prompt selectionType="RANDOM">
+            					<item>Agile definition </item>
+            				</prompt>
+            			</output>
+            		</input>
+            	</folder>
+            </folder>
+            <folder label="Storage" id="Storage"></folder>
+        </folder>
+        <folder label="Concepts" id="Concepts"></folder>
+    </flow>
+</dialog>
