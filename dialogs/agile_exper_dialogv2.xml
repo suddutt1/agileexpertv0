@@ -1,0 +1,87 @@
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd">
+    <flow>
+        <folder label="Main" id="Main">
+        	<output>
+		        <prompt selectionType="RANDOM">
+		            <item>Hello, welcome to Cognitive Agile Scrum Expert </item>
+		        </prompt>
+		        <goto ref="getQuestions"/>
+		    </output>
+		    <getUserInput id="getQuestions">
+		        <search ref="search_all_questions"/>
+		        <default>
+		            <output>
+		                <prompt selectionType="RANDOM">
+		                    <item>
+		                        I am not able to answer your question at this moment. May be I need more training.
+		                    </item>
+		                </prompt>
+		            </output>
+		        </default>
+		    </getUserInput>
+        </folder>
+        <folder label="Library" id="Library">
+            <folder label="Live Content" id="Live Content">
+            	
+            	<folder id="search_all_questions" label="All general QA">
+            		<input>
+            			<grammar>
+            				<item>what is agile</item>
+            				<item>what is agile methodoloy</item>
+            				<item>what does agile do ?</item>
+            			</grammar>
+            			<output>
+            				<prompt selectionType="RANDOM">
+            					<item>Agile approaches help teams respond to unpredictability through incremental, iterative work cadences,
+            					 known as sprints. Agile methodologies are an alternative to waterfall, or traditional sequential development.</item>
+            				</prompt>
+            			</output>
+            			
+            		</input>
+            		<input>
+            			<grammar>
+            				<item>what is scrum</item>
+            				<item>what does scrum do</item>
+            				<item>definition of scrum</item>
+            				<item>* definition scrum</item>
+            			</grammar>
+            			<output>
+            				<prompt selectionType="RANDOM">
+            					<item>
+            						A framework within which people can address complex adaptive problems, while 
+            						productively and creatively delivering products of the highest possible value.
+            						 - See more at: https://www.scrumalliance.org/why-scrum/scrum-guide#sthash.QftrjsJp.dpuf
+            					</item>
+            				</prompt>
+            			</output>
+            		</input>
+            		<input>
+            			<grammar>
+            				<item>* scrum features*</item>
+            				<item>* about scrum *</item>
+            			</grammar>
+            			<output>
+            				<prompt selectionType="RANDOM">
+            					<item>
+            						Scrum is:
+										Lightweight
+										Simple to understand
+										Difficult to master
+            					</item>
+            				</prompt>
+            			</output>
+            		</input>
+            	</folder>
+            </folder>
+            <folder label="Storage" id="Storage"></folder>
+        </folder>
+        <folder label="Concepts" id="Concepts">
+        	<concept>
+        		<grammar>
+	        		<item>definition</item>
+	        		<item>define</item>
+        		</grammar>
+        	</concept>
+        </folder>
+    </flow>
+</dialog>
