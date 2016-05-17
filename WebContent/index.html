@@ -46,21 +46,41 @@
 			<button class="btn btn-primary" ng-model="askBtn" ng-disabled = "converseBtnDisable" ng-click="converse();">{{message}}</button>
 		</div>
 		<div class="form-group">
-			<button class="btn btn-danger" ng-model="showBtn"  ng-click="lowConfAnswers();">Show me unanswered questions</button>
+			<button class="btn btn-danger" ng-model="showBtn" ng-disabled = "lowAnswerDisable" ng-click="lowConfAnswers();">Show me unanswered questions</button>
 		</div>
 		</form>
 	<div id="history"  class="well well-sm" style = "overflow: scroll;height: 300px;"></div>
 	</div>
+	<script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Questions those have low confidence level</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                <li ng-repeat="question in questions">
+                    {{ question }}
+                </li>
+            </ul>
+            
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
 </div>	
 	
 <script>
 var app = angular.module('agileExpertApp', ['ui.bootstrap']);
-app.controller('conversionController', function($scope,$http,$compile) {
+app.controller('conversionController', function($scope,$http,$compile,$uibModal) {
    $scope.converseBtnDisable  = true;
+   $scope.lowAnswerDisable = true;
    $scope.clientId = 0;
    $scope.conversationId=0;
    $scope.question  = "";
    $scope.message = "Initializing";
+   
+   $scope.questions = [];
    if($scope.dialogId == null)
 	{
 		//Get the dialogid to start conversation
@@ -118,6 +138,7 @@ app.controller('conversionController', function($scope,$http,$compile) {
 				$scope.display('expert',response.data.result.response[0]);
 				$scope.message = "Ask Expert" ;
 				$scope.converseBtnDisable = false;
+				$scope.lowAnswerDisable = false;
 				  			
 			}
 		},function(error){
@@ -131,6 +152,37 @@ app.controller('conversionController', function($scope,$http,$compile) {
 		var appendHtml = $compile('<convesation persona=\''+ persona +'\' text=\''+text+'\'></convesation>')($scope);
 		 divElement.append(appendHtml);
 	};
+	$scope.lowConfAnswers = function(){
+		$scope.lowAnswerDisable = true;
+		//First get the list of questions those are not answerd
+		$http.get("expert/service/lowConfidenceAnswers").then(function(response){
+			console.log("Response for context :"+ response.data);		
+			if(response.data.success === true)
+			{
+				$scope.questions = response.data.result;
+				console.log("Low conf questions :"+ $scope.questions);
+				var modalInstance = $uibModal.open({
+				      animation: $scope.animationsEnabled,
+				      templateUrl: 'myModalContent.html',
+				      controller: 'ModalInstanceCtrl',
+				      size: 'lg',
+				      resolve: {
+				    	  questions: function () {
+				          return $scope.questions;
+				        }
+				      }
+				    });
+				$scope.lowAnswerDisable = false;
+			}
+		}
+		,function(err){
+			alert("Unable to get the questions");
+		});
+		
+		
+	}
+	
+	
 	
 }).directive('convesation',function(){
 	return {
@@ -156,7 +208,19 @@ app.controller('conversionController', function($scope,$http,$compile) {
 
 	}
 	
-});
+}).controller('ModalInstanceCtrl', function ($scope, $uibModalInstance, questions) {
+
+	  $scope.questions = questions;
+	  
+
+	  $scope.ok = function () {
+	    $uibModalInstance.close();
+	  };
+
+	  $scope.cancel = function () {
+	    $uibModalInstance.dismiss('cancel');
+	  };
+	});
 </script>
 	
 	

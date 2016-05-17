@@ -58,6 +58,7 @@ public class AgileExpertService extends Application {
 		Conversation reply = service.converse(conversation, question.toLowerCase()).execute();
 		if (reply.getConfidence() <= CONF_THREASHOLD) {
 			// Store the question for further training
+			if(reply.getInput()!=null && reply.getInput().trim().length()>0)
 			_storageService.storeObjects(DIALOG_NAME, reply.getInput());
 		}
 
