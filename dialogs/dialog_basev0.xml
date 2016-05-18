@@ -1,0 +1,66 @@
+<dialog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd">
+	<flow>
+		<folder label="Main" id="Main">
+			<output>
+				<prompt selectionType="RANDOM">
+					<item>Welcome message</item>
+				</prompt>
+				<goto ref="answerQuestions" />
+			</output>
+			<getUserInput id="answerQuestions">
+				<search ref="search_all_questions" />
+				<default>
+					<output>
+						<prompt selectionType="RANDOM">
+							<item>
+								This is the default response 
+							</item>
+						</prompt>
+					</output>
+				</default>
+			</getUserInput>
+		</folder>
+		<folder label="Library" id="Library">
+			<folder label="Live Content" id="Live Content">
+				<folder id="search_all_questions" label="All question and answers">
+					<input>
+						<grammar>
+							<item> Pattern of question 1</item>
+						</grammar>
+						<!--  If the pattern matches then following out put is the answer -->
+						<output>
+							<prompt selectionType="RANDOM">
+								<item>Answer to the question </item>
+							</prompt>
+						</output>
+					</input>
+					<input>
+						<grammar>
+							<item> Pattern of question 2</item>
+						</grammar>
+						<!--  If the pattern matches then following out put is the answer -->
+						<output>
+							<prompt selectionType="RANDOM">
+								<item>Answer to the question 2</item>
+							</prompt>
+						</output>
+					</input>
+					
+				</folder>
+			</folder>
+			<folder label="Storage" id="Storage">
+			</folder>
+		</folder>
+		<folder label="Concepts" id="Concepts">
+			<concept>
+				<grammar>
+		           <item>main concept to be used in the input tag grammer</item>
+		           <item>other word means the same concept</item>
+		           <item>another word that signify the same concept</item>
+		           
+       			</grammar>
+			</concept>
+		</folder>
+	</flow>
+</dialog>
